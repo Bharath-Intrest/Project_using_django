@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            height: 100vh; 
+            background-image: url("https://wallpapers.com/images/featured/plain-white-background-xdwiksazlsuzkuhi.jpg");
+            background-size: cover;
+            position: relative; 
+        }
+        .menu-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+        .menu {
+            display: none;
+            position: absolute;
+            top: 40px; 
+            right: 0;
+            background-color: rgb(168, 163, 163);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .menu-item {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: black;
+            display: block;
+            width: 150px;
+        }
+        .bar1, .bar2, .bar3 {
+            width: 35px;
+            height: 5px;
+            background-color: #333;
+            margin: 6px 0;
+            transition: 0.4s;
+        }
+        .change .bar1 {
+            transform: translate(0, 11px) rotate(-45deg);
+        }
+        .change .bar2 { opacity: 0; }
+        .change .bar3 {
+            transform: translate(0, -11px) rotate(45deg);
+        }
+        .search-container {
+            margin-top: 20px; 
+            display: flex; 
+            justify-content: center; 
+            width: 100%; /* Full width */
+        }
+        .search-container input {
+            width: 350px;
+            font-size: 18px;
+            padding: 10px 40px 10px 10px; 
+            border-radius: 25px 0 0 25px; 
+            border: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: width 0.4s ease-in-out;
+        }
+        .search-container input:focus {
+            width: 450px;
+        }
+        .search-icon {
+            cursor: pointer;
+            width: 20px; 
+            height: 20px; 
+            margin-left: -30px; 
+            align-self: center; 
+        }
+        .autocomplete-results {
+            position: absolute;
+            top: 60px; 
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-result {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-result:hover {
+            background-color: #f0f0f0;
+        }
+        table {
+            font-family: Arial, Helvetica, sans-serif;
+            width: 95%; 
+            margin-top: 20px; 
+            border-collapse: collapse;
+         color: #f0f0f0;
+            border: 5px solid #0e0c0c;
+        }
+        td, th {
+            border: 2px solid #111111;
+            text-align: left;
+            padding: 20px;
+            color: #110f0f;
+            background-color: rgb(252, 245, 239);
+        }
+        th {
+            background-color: #0c0b0b; 
+            color: #f0f0f0;
+        }
+        a:link {
+  color: rgb(226, 236, 226);
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: rgb(24, 21, 21);
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: rgb(26, 22, 22);
+  background-color: transparent;
+  text-decoration: underline;
+}
+a:active {
+  color: rgb(14, 14, 12);
+  background-color: transparent;
+  text-decoration: underline;
+}
+.back-arrow-container {
+    position: fixed;
+    top: 10px;
+    left: 5px;
+    z-index: 1000; 
+}
+
+.back-arrow {
+    width: 30px; 
+    height: auto; 
+    cursor: pointer; 
+}
+
+.content {
+    padding: 40px; 
+}
+
+    </style>
+</head>
+<body>
+    <div class="menu-container" onclick="toggleMenu(event)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="menu" id="menu">
+            
+            <a href="http://127.0.0.1:8000/"class="menu-item">Logout</a>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search...">
+        <img class="search-icon" src="https://thumbs.dreamstime.com/b/magnifying-glass-search-icon-flat-vector-graphic-isolated-background-magnifying-glass-search-icon-123898043.jpg" alt="Search" onclick="performSearch()" />
+        <div class="autocomplete-results" id="autocomplete-results"></div>
+    </div>
+    <div class="back-arrow-container">
+        <a href="file:///C:/Users/new/Music/2project.html">
+            <img src="https://i.pinimg.com/736x/63/d9/a0/63d9a0f0ca26a6a3da699c91132aa03d.jpg" alt="Back" class="back-arrow">
+        </a>
+    </div>
+    <table>
+        <tr>
+            <th>Course</th>
+            <th>Duration</th>
+            <th>Related Staff</th>
+        </tr>
+        {% for i in lst %}
+        <tr>
+            <td><a href="course/" target="_blank">{{i.c_name}}</a></td>
+            <td>{{i.c_duration}}</td>
+            <td>{{i.staffs}}</td>
+        </tr>
+        {%endfor%}
+        
+    </table>
+    <script>
+        function toggleMenu(event) {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            event.stopPropagation();
+        }
+        
+        const searchInput = document.getElementById('search-input');
+        const autocompleteResults = document.getElementById('autocomplete-results');
+        const suggestions = ["prag", "siva", "data", "kathir", "rafi", "arun", "nithish", "dhivi"];
+        
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            autocompleteResults.innerHTML = ''; 
+            if (query) {
+                const filteredSuggestions = suggestions.filter(item => item.toLowerCase().includes(query));
+                filteredSuggestions.forEach(suggestion => {
+                    const div = document.createElement('div');
+                    div.textContent = suggestion;
+                    div.classList.add('autocomplete-result');
+                    div.addEventListener('click', () => {
+                        searchInput.value = suggestion;
+                        autocompleteResults.innerHTML = ''; 
+                    });
+                    autocompleteResults.appendChild(div);
+                });
+                if (filteredSuggestions.length > 0) {
+                    autocompleteResults.style.display = 'block'; 
+                } else {
+                    autocompleteResults.style.display = 'none'; 
+                }
+            } else {
+                autocompleteResults.style.display = 'none'; 
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('menu');
+            if (!menu.contains(event.target) && !event.target.closest('.menu-container')) {
+                menu.style.display = 'none'; 
+            }
+            if (!searchInput.contains(event.target) && !autocompleteResults.contains(event.target)) {
+                autocompleteResults.style.display = 'none'; 
+            }
+        });
+    </script>
+</body>
+</html>

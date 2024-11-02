@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            height: 100vh; 
+            background-image: url("https://wallpapers.com/images/featured/plain-white-background-xdwiksazlsuzkuhi.jpg");
+            background-size: cover;
+            position: relative; 
+        }
+        .search-container {
+            margin-top: 20px; 
+            position: relative; 
+            display: flex; 
+        }
+        .menu-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+        .menu {
+            display: none;
+            position: absolute;
+            top: 40px; 
+            right: 0;
+            background-color: rgb(168, 163, 163);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .menu-item {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: black;
+            display: block;
+            width: 150px;
+        }
+        .bar1, .bar2, .bar3 {
+            width: 35px;
+            height: 5px;
+            background-color: #333;
+            margin: 6px 0;
+            transition: 0.4s;
+        }
+        .change .bar1 {
+            transform: translate(0, 11px) rotate(-45deg);
+        }
+        .change .bar2 { opacity: 0; }
+        .change .bar3 {
+            transform: translate(0, -11px) rotate(45deg);
+        }
+        .search-container input {
+            width: 350px;
+            font-size: 18px;
+            padding: 10px 40px 10px 10px; 
+            border-radius: 25px 0 0 25px; 
+            border: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: width 0.4s ease-in-out;
+        }
+        .search-container input:focus {
+            width: 450px;
+        }
+        .search-icon {
+            cursor: pointer;
+            width: 20px; 
+            height: 20px; 
+            margin-left: -30px; 
+            align-self: center; 
+        }
+        .autocomplete-results {
+            position: absolute;
+            top: 60px; 
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-result {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-result:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .chatbox {
+            position: absolute;
+            top: 60px; 
+            bottom: 20px; 
+            left: 30px;
+            width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgb(175, 167, 167);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+        .chatbox-header {
+            background-color: #131314;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            text-align: center;
+        }
+        .chatbox-messages {
+            padding: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .chatbox-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .chatbox-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .chatbox-input button {
+            padding: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 20px;
+            max-width: 75%;
+            clear: both;
+        }
+        .message.sent {
+            background-color: #2c2e30;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .message.received {
+            background-color: #f1f0f0;
+            color: black;
+            align-self: flex-start;
+            margin-right: auto;
+        }
+        a:link {
+            color: rgb(226, 236, 226);
+            background-color: transparent;
+            text-decoration: none;
+        }
+        a:visited {
+            color: rgb(24, 21, 21);
+            background-color: transparent;
+            text-decoration: none;
+        }
+        a:hover {
+            color: rgb(26, 22, 22);
+            background-color: transparent;
+            text-decoration: underline;
+        }
+        a:active {
+            color: rgb(14, 14, 12);
+            background-color: transparent;
+            text-decoration: underline;
+        }
+
+        .back-arrow-container {
+            position: fixed;
+            top: 10px;
+            left: 5px;
+            z-index: 1000; 
+        }
+
+        .back-arrow {
+            width: 30px; 
+            height: auto; 
+            cursor: pointer; 
+        }
+
+        .content {
+            padding: 40px; 
+        }
+
+        .info-box {
+            position: absolute;
+            top: 70px; /* Position it below the search bar */
+            right: 90px; /* Align with the chatbox */
+            width: 60%; /* Set a width for the info box */
+            border: 1px solid #ccc;
+            height: 50%;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            max-height: calc(100vh - 80px); /* Keep it responsive */
+            overflow-y: auto; /* Allow scrolling if content is too long */
+        }
+
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .info-box p {
+            color: #555;
+        }
+        .table-box {
+            position: absolute;
+            top: 410px; /* Position it below the search bar */
+            right: 400px; /* Align with the chatbox */
+            width: 35%; /* Set a width for the table box */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            max-height: calc(100vh - 80px); /* Keep it responsive */
+            overflow-y: auto; /* Allow scrolling if content is too long */
+        }
+
+        .table-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-box th, .table-box td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .table-box th {
+            background-color: #e9e9e9;
+        }
+        .profile-photo {
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%;
+            margin-right: 20px; 
+        }
+        .student-dashboard-header {
+            background-color: #0c0d0e;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            text-align: center;
+            width: 100%;
+        }
+        .student-dashboard-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .student-dashboard-item:last-child {
+            border-bottom: none;
+        }
+        .student-dashboard {
+            position: absolute;
+            bottom: 20px; 
+            left: 500px; 
+            width: 400px; 
+            border: 1px solid rgb(41, 38, 38);
+            border-radius: 5px;
+            background-color: rgb(134, 130, 130);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            margin-top: 10px; 
+            display: flex; 
+            align-items: center; 
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container" onclick="toggleMenu(event)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="menu" id="menu">
+            <a href="http://127.0.0.1:8000/1/" class="menu-item">Dashboard</a>
+            <a href="http://127.0.0.1:8000/" class="menu-item">Logout</a>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search...">
+        <img class="search-icon" src="https://thumbs.dreamstime.com/b/magnifying-glass-search-icon-flat-vector-graphic-isolated-background-magnifying-glass-search-icon-123898043.jpg" alt="Search" onclick="performSearch()" />
+        <div class="autocomplete-results" id="autocomplete-results"></div>
+    </div>
+    <div class="chatbox">
+        <div class="chatbox-header">Chat</div>
+        <div class="chatbox-messages" id="chatbox-messages"></div>
+        <div class="chatbox-input">
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <div class="info-box">
+        <h3>Project on Ai</h3>
+       <p>{{pro_d.c_details}}</p>
+    </div>
+
+    <div class="student-dashboard">
+        <img src="data:image/png;base64,{{img}}" alt="Profile Photo" class="profile-photo"> 
+        <div>
+            <div class="student-dashboard-header">Student Dashboard</div>
+            <div class="student-dashboard-item">{{details.name}}</div>
+            <div class="student-dashboard-item">{{details.rollno}}</div>
+            <div class="student-dashboard-item">{{details.dept}}</div>
+            <div class="student-dashboard-item">{{detail.phno}}</div>
+        </div>
+    </div>
+    
+    <div class="back-arrow-container">
+        <a href="file:///C:/Users/new/Music/project3.html">
+            <img src="https://i.pinimg.com/736x/63/d9/a0/63d9a0f0ca26a6a3da699c91132aa03d.jpg" alt="Back" class="back-arrow">
+        </a>
+    </div>
+    <script>
+        function toggleMenu(event) {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            event.stopPropagation();
+        }
+        
+        const searchInput = document.getElementById('search-input');
+        const autocompleteResults = document.getElementById('autocomplete-results');
+        const suggestions = ["prag", "data", "bharath", "kathir", "rafi", "arun", "nithish", "dhivi"];
+        
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            autocompleteResults.innerHTML = ''; 
+            if (query) {
+                const filteredSuggestions = suggestions.filter(item => item.toLowerCase().includes(query));
+                filteredSuggestions.forEach(suggestion => {
+                    const div = document.createElement('div');
+                    div.textContent = suggestion;
+                    div.classList.add('autocomplete-result');
+                    div.addEventListener('click', () => {
+                        searchInput.value = suggestion;
+                        autocompleteResults.innerHTML = ''; 
+                    });
+                    autocompleteResults.appendChild(div);
+                });
+                if (filteredSuggestions.length > 0) {
+                    autocompleteResults.style.display = 'block'; 
+                } else {
+                    autocompleteResults.style.display = 'none'; 
+                }
+            } else {
+                autocompleteResults.style.display = 'none'; 
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('menu');
+            if (!menu.contains(event.target) && !event.target.closest('.menu-container')) {
+                menu.style.display = 'none'; 
+            }
+            if (!searchInput.contains(event.target) && !autocompleteResults.contains(event.target)) {
+                autocompleteResults.style.display = 'none'; 
+            }
+        });
+
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const chatboxMessages = document.getElementById('chatbox-messages');
+
+        sendButton.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = message;
+                messageDiv.classList.add('message', 'sent'); 
+                chatboxMessages.appendChild(messageDiv);
+                chatInput.value = ''; 
+                chatboxMessages.scrollTop = chatboxMessages.scrollHeight; 
+            }
+        });
+
+        chatInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click(); 
+            }
+        });
+
+        receiveMessage('hello');
+        receiveMessage('I have some doughts in your project')
+        receiveMessage('Will you please explain me?')
+        function receiveMessage(msg) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = msg;
+            messageDiv.classList.add('message', 'received'); 
+            chatboxMessages.appendChild(messageDiv);
+            chatboxMessages.scrollTop = chatboxMessages.scrollHeight; 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+.bg-img {
+    background-image: url("https://i.pinimg.com/originals/50/3b/17/503b174d539eb6e6a2a8ceca6ced9b04.jpg");
+    min-height: 100vh;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    box-sizing: border-box;
+    background-color: transparent; 
+    color: white; 
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+    box-shadow: none;
+}
+
+button {
+    background-color: #0a0c0c;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    color: beige;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+    position: relative;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 10px; 
+    padding: 20px;
+}
+
+img.avatar {
+    width: 20%;
+    border-radius: 50%;
+}
+
+.container {
+    padding: 16px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 10px; 
+}
+
+.container label {
+    color: white; 
+    text-align: left; 
+    display: block; 
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    padding-top: 60px;
+}
+
+.modal-content {
+    margin: 5% auto 15% auto; 
+    width: 60%; 
+    background-color: transparent; 
+}
+
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #ec1313;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+    .cancelbtn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body class="bg-img">
+    
+<h2 id="welcomeText" style="color: #f5f0f0;">click here to</h2>
+<span id="handEmoji" style='font-size:100px;'>&#128071;</span>
+
+<button id="loginButton" onclick="openModal()" style="width:auto;">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="{{url}}" method="post">
+    {% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="closeModal()" class="close" title="Close Modal">&times;</span>
+      <img src="https://thumbs.dreamstime.com/b/user-icon-vector-male-person-symbol-profile-circle-avatar-sign-flat-color-glyph-pictogram-user-icon-vector-male-person-symbol-117610364.jpg" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+        
+      <button onclick="window.location.href='D:/Bharath/project2.html';" type="submit">Login</button>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+    </div>
+
+    <div class="container">
+     <center><button type="button" onclick="closeModal()" class="cancelbtn">Cancel</button></center>
+    </div>
+    
+  </form>
+</div>
+
+<script>
+var modal = document.getElementById('id01');
+
+function openModal() {
+    document.getElementById('welcomeText').style.display = 'none'; 
+    document.getElementById('handEmoji').style.display = 'none'; 
+    document.getElementById('loginButton').style.display = 'none'; 
+    modal.style.display = 'block'; 
+}
+
+function closeModal() {
+    document.getElementById('welcomeText').style.display = 'block'; 
+    document.getElementById('handEmoji').style.display = 'block'; 
+    document.getElementById('loginButton').style.display = 'block'; 
+    modal.style.display = 'none'; 
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+
+</body>
+</html>
